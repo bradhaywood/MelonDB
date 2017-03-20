@@ -3,6 +3,7 @@ include "classes/row.lua"
 include "classes/table.lua"
 include "classes/schema.lua"
 include "classes/connector.lua"
+include "classes/model.lua"
 
 local function LoadModules()
 	local files, _ = file.Find("addons/melondb/lua/modules/*", "GAME")

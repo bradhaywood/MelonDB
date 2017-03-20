@@ -27,6 +27,17 @@ local function _endSearch(cols)
 	return str
 end
 
+function MTable:SetTableDetails()
+	local t = sql.Query("PRAGMA table_info(".. self.Name .. ");")
+	for k,v in pairs(t) do
+		local valType = v["type"]
+		if (string.starts(valType, "varchar")) then valType = "varchar" end
+		if (string.starts(valType, "integer")) then valType = "integer" end
+		if (string.starts(valType, "timestamp")) then valType = "timestamp" end
+		self.Columns[v["name"]] = valType
+	end
+end
+
 function MTable:GetTable()
 	local name = self.Name
 	if (sql.TableExists(name)) then
@@ -39,13 +50,6 @@ end
 
 function MTable:Exists()
 	return sql.TableExists(self.Name)
-end
-
-function MTable:SetTableDetails()
-	local t = sql.Query("PRAGMA table_info(".. self.Name .. ");")
-	for k,v in pairs(t) do
-		self.Columns[v["name"]] = v["type"]
-	end
 end
 
 function MTable:Create(opts)
