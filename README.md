@@ -10,24 +10,24 @@ GMod SQL made easy
 
 local schema, err = MelonDB.Connect('sqlite')
 if (err) then
-	-- obviously this should not be a problem for sqlite..
-	print("Error connecting: " .. err)
+  -- obviously this should not be a problem for sqlite..
+  print("Error connecting: " .. err)
 end
 
 local userTable, err = schema.Table("users")
 if (err) then
-	print("User table doesn't exist, creating")
-	local userTable, err = userTable.Create({
-		username = "varchar(250)",
-		status   = "varchar(40)",
-		points   = "integer"
-	})
+  print("User table doesn't exist, creating")
+  local userTable, err = userTable.Create({
+    username = "varchar(250)",
+    status   = "varchar(40)",
+    points   = "integer"
+  })
 
-	if (err) then
-		print("Problem creating table: " .. err)
-	else
-		print("Created table")
-	end
+  if (err) then
+    print("Problem creating table: " .. err)
+  else
+    print("Created table")
+  end
 end
 
 ---
@@ -35,9 +35,9 @@ end
 ---
 
 local row, err = userTable:Insert({
-	username = 'SomeName',
-	status = 'active',
-	points = 5000
+  username = 'SomeName',
+  status = 'active',
+  points = 5000
 })
 
 ---
@@ -47,7 +47,7 @@ local row, err = userTable:Insert({
 local userTable, err = schema.Table("users")
 local result = userTable:Find({ username = "SomeName" })
 if (result) then
-	print("Found user " .. result.username)
+  print("Found user " .. result.username)
 end
 
 -- You can search multiple columns
