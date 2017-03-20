@@ -89,18 +89,26 @@ function MTable:Find(tbl, cols)
 	local columns = _columns(cols)
 	if (tbl ~= nil) then
 		local sqlstr = "SELECT " .. columns .. " FROM " .. self.Name .. " WHERE "
+		local _where = ""
 		local val
 		for k,v in pairs(tbl) do
 			val = type(v) == "string" and '"' .. v .. '"' or v
 			if (next(tbl,k) == nil) then
-				sqlstr = sqlstr .. k .. " = " .. val
+				_where = _where .. k .. " = " .. val
+				sqlstr = sqlstr .. _where
 			else
-				sqlstr = sqlstr .. k .. " = " .. val .. " AND "
+				_where = _where .. k .. " = " .. val .. " AND "
+				sqlstr = sqlstr .. _where
 			end
 		end
 
 		local res = sql.Query(sqlstr .. " LIMIT 1")
-		return res and res[1] or false
+		if (res) then
+			local row = MRow(res[1], self, _where)
+			return row
+		else
+			return false
+		end
 	else
 		return false, "MTable:Find: Table expected"
 	end

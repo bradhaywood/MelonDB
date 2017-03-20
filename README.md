@@ -80,8 +80,19 @@ local resultset = userTable:All({}, { columns = {"username", "points"} })
 ---
 
 local resultset = userTable:All({}, {
-	columns = {"username", "points"},
-	limit = 2
+  columns = {"username", "points"},
+  limit = 2
 })
+
+---
+-- Updating
+---
+
+local result = userTable:Find({ username = "SomeName" })
+print(result.username .. " has " .. result.points .. " points")
+result:Update({ points = 10000 })
+
+-- on a successful update, the object is changed as well as the database
+print("They now have " .. result.points .. " points")
 
 ```
