@@ -96,3 +96,60 @@ result:Update({ points = 10000 })
 print("They now have " .. result.points .. " points")
 
 ```
+
+## Real world example
+
+Say you want to save a players experience when they leave and re-join your server. You can use 
+a combination of `SetNWInt` and MelonDB to do just that.
+
+```lua
+-- set or retrieve experience when they spawn in initially
+local function MyGM_InitSpawn(ply)
+  local steamID = ply:SteamID()
+  local playerRes = userTable:Find({ steam_id = steamID })
+  
+  -- if we get a result, then they've been here before
+  if (playerRes) then
+    ply:SetNWInt("experience", playerRes.experience)
+  else
+    -- set up a new row for the player
+    local row, err = userTable:Insert({
+      experience = 0,
+      steam_id = steamID
+    })
+
+    -- make sure everything was ok before proceeding
+    if (not err) then
+      ply:SetNWInt("experience", 0)
+    else
+      -- handle the error
+    end
+  end
+end
+
+-- save their experience when they leave
+local function MyGM_PlayerLeave(ply)
+  local steamID = ply:SteamID()
+  -- we should already have their details in the database
+  -- but you can do error checking if you want
+  local playerRes = userTable:Find({ steam_id = steamID })
+
+  -- store the new experience value they received while playing
+  playerRes:Update({ experience = ply:GetNWInt("experience") })
+end
+
+-- In the event we shut down the server, we still want to keep
+-- the players experience up to date
+local function MyGM_Shutdown()
+  for _, ply in pairs(player.GetAll()) do
+    local steamID = ply:SteamID()
+    local playerRes = userTable:Find({ steam_id = steamID })
+    playerRes:Update({ experience = ply:GetNWInt("experience") })
+  end
+end
+
+-- finally, add the hooks
+hook.Add("PlayerInitialSpawn", "GM Initial Spawn", MyGM_InitSpawn)
+hook.Add("PlayerDisconnected", "GM Player Leave", MyGM_PlayerLeave)
+hook.Add("ShutDown", "GM Shutdown", MyGM_Shutdown)
+```
