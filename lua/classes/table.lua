@@ -8,6 +8,11 @@ function MTable:Initialize(name)
 	return self
 end
 
+local function _columns(cols)
+	if (cols == nil) then return "*" end
+	return join(cols, ", ")
+end
+
 function MTable:GetTable()
 	local name = self.Name
 	if (sql.TableExists(name)) then
@@ -44,12 +49,13 @@ function MTable:Create(opts)
 	end
 end
 
-function MTable:All(tbl)
-	if (tbl == nil) then
-		local res = sql.Query("SELECT * FROM " .. self.Name)
+function MTable:All(tbl, cols)
+	local columns = _columns(cols)
+	if (tbl == nil or #tbl < 1) then
+		local res = sql.Query("SELECT " .. columns .. " FROM " .. self.Name)
 		return res and res[1] or false
 	else
-		local sqlstr = "SELECT * FROM " .. self.Name .. " WHERE "
+		local sqlstr = "SELECT " .. columns .. " FROM " .. self.Name .. " WHERE "
 		local val
 		for k,v in pairs(tbl) do
 			val = type(v) == "string" and '"' .. v .. '"' or v
@@ -65,9 +71,10 @@ function MTable:All(tbl)
 	end
 end
 
-function MTable:Find(tbl)
+function MTable:Find(tbl, cols)
+	local columns = _columns(cols)
 	if (tbl ~= nil) then
-		local sqlstr = "SELECT * FROM " .. self.Name .. " WHERE "
+		local sqlstr = "SELECT " .. columns .. " FROM " .. self.Name .. " WHERE "
 		local val
 		for k,v in pairs(tbl) do
 			val = type(v) == "string" and '"' .. v .. '"' or v

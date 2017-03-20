@@ -70,4 +70,11 @@ for k,v in pairs(resultsetWithFilters) do
   print(v["username"])
 end
 
+---
+-- Return specific columns only
+---
+
+-- retrieve only the username and points columns from row
+local result = userTable:Find({ username = "SomeName" }, { "username", "points"})
+local resultset = userTable:All({}, { "username", "points"})
 ```
