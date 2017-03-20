@@ -44,6 +44,27 @@ function MTable:Create(opts)
 	end
 end
 
+function MTable:All(tbl)
+	if (tbl == nil) then
+		local res = sql.Query("SELECT * FROM " .. self.Name)
+		return res and res[1] or false
+	else
+		local sqlstr = "SELECT * FROM " .. self.Name .. " WHERE "
+		local val
+		for k,v in pairs(tbl) do
+			val = type(v) == "string" and '"' .. v .. '"' or v
+			if (next(tbl,k) == nil) then
+				sqlstr = sqlstr .. k .. " = " .. val
+			else
+				sqlstr = sqlstr .. k .. " = " .. val .. " AND "
+			end
+		end
+
+		local res = sql.Query(sqlstr)
+		return res and res or false
+	end
+end
+
 function MTable:Find(tbl)
 	if (tbl ~= nil) then
 		local sqlstr = "SELECT * FROM " .. self.Name .. " WHERE "
