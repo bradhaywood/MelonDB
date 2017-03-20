@@ -41,7 +41,7 @@ local row, err = userTable:Insert({
 })
 
 ---
--- Retrieving a row from an existing table
+-- Retrieving a single row from an existing table
 ---
 
 local userTable, err = schema.Table("users")
@@ -54,4 +54,20 @@ end
 
 -- this would return false, because SomeName's status is "active"
 local result = userTable:Find({ username = "SomeName", status = "disabled" })
+
+---
+-- Retrieve all matching rows
+---
+
+local resultset = userTable:All()
+local resultsetWithFilters = userTable:All({ points = 5000 })
+
+for k,v in pairs(resultset) do
+  print(k .. " => " .. tostring(v))
+end
+
+for k,v in pairs(resultsetWithFilters) do
+  print(v["username"])
+end
+
 ```
