@@ -10,7 +10,21 @@ end
 
 local function _columns(cols)
 	if (cols == nil) then return "*" end
-	return join(cols, ", ")
+	if (cols["columns"] ~= nil) then
+		return join(cols["columns"], ", ")
+	else
+		return "*"
+	end
+end
+
+local function _endSearch(cols)
+	local str = ""
+	if (cols == nil) then return "" end
+	if (cols["limit"]) then
+		str = str .. " LIMIT " .. cols["limit"]
+	end
+
+	return str
 end
 
 function MTable:GetTable()
@@ -52,8 +66,8 @@ end
 function MTable:All(tbl, cols)
 	local columns = _columns(cols)
 	if (tbl == nil or #tbl < 1) then
-		local res = sql.Query("SELECT " .. columns .. " FROM " .. self.Name)
-		return res and res[1] or false
+		local res = sql.Query("SELECT " .. columns .. " FROM " .. self.Name .. _endSearch(cols))
+		return res and res or false
 	else
 		local sqlstr = "SELECT " .. columns .. " FROM " .. self.Name .. " WHERE "
 		local val
@@ -66,7 +80,7 @@ function MTable:All(tbl, cols)
 			end
 		end
 
-		local res = sql.Query(sqlstr)
+		local res = sql.Query(sqlstr .. _endSearch(cols))
 		return res and res or false
 	end
 end
@@ -85,7 +99,7 @@ function MTable:Find(tbl, cols)
 			end
 		end
 
-		local res = sql.Query(sqlstr)
+		local res = sql.Query(sqlstr .. " LIMIT 1")
 		return res and res[1] or false
 	else
 		return false, "MTable:Find: Table expected"

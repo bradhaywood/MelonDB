@@ -62,12 +62,9 @@ local result = userTable:Find({ username = "SomeName", status = "disabled" })
 local resultset = userTable:All()
 local resultsetWithFilters = userTable:All({ points = 5000 })
 
+print("Found " .. table.Count(resultset) .. " entries")
 for k,v in pairs(resultset) do
-  print(k .. " => " .. tostring(v))
-end
-
-for k,v in pairs(resultsetWithFilters) do
-  print(v["username"])
+  print("User: " .. v["username"])
 end
 
 ---
@@ -76,5 +73,15 @@ end
 
 -- retrieve only the username and points columns from row
 local result = userTable:Find({ username = "SomeName" }, { "username", "points"})
-local resultset = userTable:All({}, { "username", "points"})
+local resultset = userTable:All({}, { columns = {"username", "points"} })
+
+---
+-- Limit returned rows
+---
+
+local resultset = userTable:All({}, {
+	columns = {"username", "points"},
+	limit = 2
+})
+
 ```
