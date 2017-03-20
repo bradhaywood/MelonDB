@@ -72,7 +72,7 @@ end
 ---
 
 -- retrieve only the username and points columns from row
-local result = userTable:Find({ username = "SomeName" }, { "username", "points"})
+local result = userTable:Find({ username = "SomeName" }, { columns = {"username", "points"} })
 local resultset = userTable:All({}, { columns = {"username", "points"} })
 
 ---
