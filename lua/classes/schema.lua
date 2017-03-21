@@ -12,4 +12,3 @@ function MSchema.Table(name)
 		return false, "MSchema.Table: Table name expected"
 	end
 end
-	

@@ -37,3 +37,26 @@ function MRow:Update(tbl)
 		return false, "MRow:Update: Table expected"
 	end
 end
+
+function MRow:Save(ply)
+	assert(ply ~= nil, "MRow:Save: Player object required")
+	assert(type(ply) == "Player", "MRow:Save: First argument must be a Player")
+
+	for key, vtype in pairs(self._table.Columns) do
+		if (key ~= "id") then -- never dynamically alter the id
+			local gettype = (function()
+				if (vtype == "varchar") then return "GetNWString" end
+				if (vtype == "timestamp") then return "GetNWString" end
+				if (vtype == "boolean") then return "GetNWBool" end
+				if (vtype == "integer") then return "GetNWInt" end
+			end)()
+
+			if (gettype ~= nil) then
+				local getval = ply[gettype](ply, key, "MDB_NULL")
+				if (getval ~= "MDB_NULL") then
+					self:Update({ [key] = getval })
+				end
+			end
+		end
+	end
+end

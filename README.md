@@ -153,3 +153,21 @@ hook.Add("PlayerInitialSpawn", "GM Initial Spawn", MyGM_InitSpawn)
 hook.Add("PlayerDisconnected", "GM Player Leave", MyGM_PlayerLeave)
 hook.Add("ShutDown", "GM Shutdown", MyGM_Shutdown)
 ```
+
+## Saving Network Vars
+
+MelonDB can automagically sync data between the database and Network variables, if they have 
+the same name of course.
+**For this to work you need an `id` field with the type `varchar` which holds the players `SteamID()`**
+
+This feature is highly experimental as it stands, so be warned.
+
+```lua
+hook.Add("PlayerDisconnected", "Player left", function(ply)
+  local userRes = userTable:Find({ id = ply:SteamID() })
+  userRes:Save()
+end)
+```
+
+That's literally all there is to it. It will go through and save every `SetNWString/Bool/Int` it can find directly to the 
+database.
