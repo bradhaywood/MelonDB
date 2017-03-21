@@ -165,7 +165,7 @@ This feature is highly experimental as it stands, so be warned.
 ```lua
 hook.Add("PlayerDisconnected", "Player left", function(ply)
   local userRes = userTable:Find({ id = ply:SteamID() })
-  userRes:Save()
+  userRes:Save(ply)
 end)
 ```
 
